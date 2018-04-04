@@ -4,9 +4,9 @@
     public static $db;
     public static function connect () {
       $host = '127.0.0.1';
-      $dbname = 'E_COMMERCE';
+      $dbname = 'e-commerce';
       $username = 'root';
-      $password = 'rajvena';
+      $password = 'root';
       $charset = 'utf8';
       $collate = 'utf8_unicode_ci';
       $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
@@ -115,7 +115,7 @@
     }
     public function create() {
       parent::handleError();
-      parent::$db->exec("INSERT INTO commandes_articles (quantite, id_com, id_art) VALUES ('$this->quantite', '$this->id_art', '$this->id_com')");
+      parent::$db->exec("INSERT INTO commandes_articles (quantite, id_com, id_art) VALUES ('$this->quantite', '$this->id_com', '$this->id_art')");
       $this->id = parent::$db->query("SELECT MAX(id) FROM commandes_articles")->fetch()["MAX(id)"];
     }
   }

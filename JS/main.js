@@ -19,7 +19,8 @@ function displayArticlePrice(nomarticle) {
 
 //Affichage tableau articles commandés
 
-// $('#add-commandearticle').click(function () {
+// $('#quantite-article').change(function () {
+//     console.log('test')
 //     displayArticlesList();
 // });
 
@@ -27,7 +28,7 @@ function displayArticlePrice(nomarticle) {
 //     const url = '../UTILS/Ajax.php?action=getlist' ;
 //     $.get(url,
 //         response => {
-//             var tableArticles = $('#list-articles');
+//             //var tableArticles = $('#list-articles');
 //             // var showId = document.createElement('td');
 //             // var showNom = document.createElement('td');
 //             // var showPrix = document.createElement('td');

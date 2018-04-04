@@ -1,8 +1,10 @@
+
+
 <?php
 
 include 'UTILS/View.php';
 
-View::scripts();
+//View::scripts();
 
 // Affichage page initiale :
 // View::element("h2", "Ajout références");
@@ -12,7 +14,7 @@ View::scripts();
 // echo "<hr/></br>";
 echo "<h2>Ajout commandes</h2>";
 View::formAddCommande();
-
+//View::tableArticles();
 // Exécution de l'app :
 if (!empty($_POST)) {
   if ((!empty($_POST['add-article']))) {
@@ -38,20 +40,18 @@ if (!empty($_POST)) {
 
     $_SESSION['id-newcommande'] = Database::getLastId('commandes');
     View::formAddCommandeArticle();
-    // View::tableArticles();
-
-    if (!empty($_POST['add-commandearticle'])) {
-      die("ici");
-      $idArticle = Database::getId('articles', 'nom', $_POST['nom-article']);
-      $newCommandeArticle = new CommandeArticle($_POST['quantite-article'], $idArticle, $_SESSION['id-newcommande']);
-      $newCommandeArticle->create();
-    }
+  }
+  else if (!empty($_POST['add-commandearticle'])) {
+    $idArticle = Database::getId('articles', 'nom', $_POST['selected-article'])['id'];
+    $quantiteArticle = (int)$_POST['quantite-article'];
+    // var_dump($idArticle);
+    // echo '</br>';
+    // var_dump((int)$_POST['quantite-article']);
+    // die();
+    $newCommandeArticle = new CommandeArticle($quantiteArticle, $idArticle, $_SESSION['id-newcommande']);
+    $newCommandeArticle->create();
   }
 }
 
 ?>
 
-    <script src='https://code.jquery.com/jquery-3.1.1.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js' integrity='sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q' crossorigin='anonymous'></script>
-    <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js' integrity='sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl' crossorigin='anonymous'></script>
-    <script src='JS/main.js'></script>
