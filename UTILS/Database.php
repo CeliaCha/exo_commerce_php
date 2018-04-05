@@ -4,9 +4,9 @@
     public static $db;
     public static function connect () {
       $host = '127.0.0.1';
-      $dbname = 'e-commerce';
+      $dbname = 'E_COMMERCE';
       $username = 'root';
-      $password = 'root';
+      $password = 'rajvena';
       $charset = 'utf8';
       $collate = 'utf8_unicode_ci';
       $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
@@ -35,6 +35,10 @@
     public static function readAll($table, $column) {
       self::handleError();
       return self::$db->query("SELECT $column FROM $table")->fetchAll();
+    }
+    public static function customReadQuery($req) {
+      self::handleError();
+      return self::$db->query($req)->fetchAll();
     }
     protected function handleError () {
       if (self::$db === NULL) {die('Base de données non initialisée');}

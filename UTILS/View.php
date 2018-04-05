@@ -9,7 +9,7 @@ class View {
         echo $element;
     }
     public static function formAddArticle () {
-        $element = "<form action='index.php' method='post' >
+        $element = "<form action='app.php' method='post' >
             <label for='nom-article'>Article :</label>
             <input required type='text' id='nom-article' name='nom-article'>
             <label for='prix-article'>Prix :</label>
@@ -22,7 +22,7 @@ class View {
         echo $element;
     }
     public static function formAddVendeur () {
-        $element = "<form action='index.php' method='post'>
+        $element = "<form action='app.php' method='post'>
             <label for='nom-vendeur'>Nom vendeur :</label>
             <input required type='text' id='nom-vendeur' name='nom-vendeur'>
             <label for='prenom-vendeur'>Prénom vendeur :</label>
@@ -32,7 +32,7 @@ class View {
         echo $element;
     }
     public static function formAddClient () {
-        $element = "<form action='index.php' method='post'>
+        $element = "<form action='app.php' method='post'>
             <label for='nom-client'>Nom client :</label>
             <input required type='text' id='nom-client' name='nom-client'>
             <label for='prenom-client'>Prénom client :</label>
@@ -44,7 +44,8 @@ class View {
     }
     public static function formAddCommande () {
         $element = 
-        "<form action='index.php' method='post'  class='form-inline'>
+        "<h2>Ajouter commande : </h2>
+        <form action='app.php' method='post'  class='form-inline'>
         <label for='nom-client'>Client :</label>
         <select required id='nom-client' name='nom-client'>";
         $clients = Database::readAll('clients', 'nom');
@@ -62,7 +63,8 @@ class View {
     }
     public static function formAddCommandeArticle () {
         $element =
-        "<form action='index.php' method='post' class='form-inline'>
+        "<h2>Ajouter article : </h2>
+        <form action='app.php' method='post'>
         <label for='selected-article'>Article</label>
         <select required id='selected-article' name='selected-article'>";
         $articles =  Database::readAll('articles', 'nom');
@@ -74,34 +76,31 @@ class View {
         <label for='quantite-article'>Quantité</label>
         <input required type='number' id='quantite-article' name='quantite-article'>
         <input id='add-commandearticle' type='submit' name='add-commandearticle' value='Submit'>
-        </form>";
+        </form>
+        <form action='app.php' method='post'>
+        <input id='end-commande' type='submit' name='end-commande' value='Terminer la commande'>
+        </form>
+        ";
         echo $element;
     }
     public static function tableArticles () {
         $element = "";
-        $quantiteArticles = Database::readAll('commandes_articles', 'quantite');
-        $idArticles = Database::readAll('commandes_articles', 'id');
-        $nomArticles = [];
-        foreach ($idArticles as $idArticle) {
-            $nomArticle = Database::read('articles', 'nom', $idArticle)['nom'];
-            echo $nomArticle;
+        $idNewCommande = $_SESSION['id-newcommande'];
+
+        $req = 
+        "SELECT commandes_articles.id_com,  articles.nom, articles.prix, commandes_articles.quantite
+        FROM articles
+        INNER JOIN commandes_articles
+        ON articles.id = commandes_articles.id_art
+        WHERE commandes_articles.id_com = {$idNewCommande}";
+
+        $table = Database::customReadQuery($req);
+        foreach ($table as $row) {
+            echo "</br>";
+            foreach ($row as $data) {
+                echo $data . " | ";
+            }
         }
-        $prixArticles = [];
-        foreach ($idArticles as $idArticle) {
-            $prixArticle = Database::read('articles', 'prix', $idArticle)['prix'];
-            echo $prixArticle;
-        }
-        // $resp->ids = $idArticles;
-        // $resp->noms = $nomArticles;
-        // $resp->quantites = $quantiteArticles;
-        // $resp->prix = $prixArticles;
-
-        // foreach ($resp as $item) {
-        //     print_r($item);
-        // }
-
-        
-
     }
 }
 

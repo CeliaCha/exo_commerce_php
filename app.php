@@ -1,23 +1,48 @@
-
-
 <?php
 
+session_start();
 include 'UTILS/View.php';
 
-//View::scripts();
-
-// Affichage page initiale :
-// View::element("h2", "Ajout références");
-// View::formAddArticle();
-// View::formAddClient();
-// View::formAddVendeur();
-// echo "<hr/></br>";
-echo "<h2>Ajout commandes</h2>";
-View::formAddCommande();
-//View::tableArticles();
-// Exécution de l'app :
+// Affichage formulaire initialisation commande si pas de commande en cours :
+if (!isset($_SESSION['id-newcommande']) ) {
+  View::formAddCommande();
+}
+else {
+  View::formAddCommandeArticle();
+  View::tableArticles();
+}
+  
 if (!empty($_POST)) {
-  if ((!empty($_POST['add-article']))) {
+
+  // Ajout commande :
+   if (!empty($_POST['add-commande'])) {
+    $idclient = Database::getId('clients','nom', $_POST['nom-client'])['id'];
+    $date = $_POST['date-commande']; 
+    $newCommande = new Commande($date, $idclient);
+    $newCommande->create();
+
+    $_SESSION['id-newcommande'] = Database::getLastId('commandes');
+    header('location: index.php');
+  }
+
+  // Ajout commande_article :
+  else if (!empty($_POST['add-commandearticle'])) {
+    $idArticle = Database::getId('articles', 'nom', $_POST['selected-article'])['id'];
+    $quantiteArticle = (int)$_POST['quantite-article'];
+    $newCommandeArticle = new CommandeArticle($quantiteArticle, $idArticle, $_SESSION['id-newcommande']);
+    $newCommandeArticle->create();
+    header('location: index.php');
+  }
+
+  // Validation commande :
+  else if (!empty($_POST['end-commande'])) {
+    unset($_SESSION['id-commande']);
+    session_unset();
+    header('location: index.php');
+  }
+
+  // Ajout références  :
+  else if ((!empty($_POST['add-article']))) {
     $newArticle = new Article($_POST['nom-article'], $_POST['prix-article'], $_POST['id-vendeur']);
     $newArticle->create();
   }
@@ -29,29 +54,6 @@ if (!empty($_POST)) {
     $newVendeur = new Vendeur($_POST['nom-vendeur'], $_POST['prenom-vendeur']);
     $newVendeur->create();
   }
-
-  // Affichage formulaire de commande
-  else if (!empty($_POST['add-commande'])) {
-
-    $idclient = Database::getId('clients','nom', $_POST['nom-client'])['id'];
-    $date = $_POST['date-commande']; 
-    $newCommande = new Commande($date, $idclient);
-    $newCommande->create();
-
-    $_SESSION['id-newcommande'] = Database::getLastId('commandes');
-    View::formAddCommandeArticle();
-  }
-  else if (!empty($_POST['add-commandearticle'])) {
-    $idArticle = Database::getId('articles', 'nom', $_POST['selected-article'])['id'];
-    $quantiteArticle = (int)$_POST['quantite-article'];
-    // var_dump($idArticle);
-    // echo '</br>';
-    // var_dump((int)$_POST['quantite-article']);
-    // die();
-    $newCommandeArticle = new CommandeArticle($quantiteArticle, $idArticle, $_SESSION['id-newcommande']);
-    $newCommandeArticle->create();
-  }
 }
-
 ?>
 

@@ -39,3 +39,4 @@ if ($_GET['action'] === 'getprix') {
             // var showQuantite = document.createElement('td');
 
            // read($table, $column, $id) 
+

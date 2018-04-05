@@ -9,9 +9,8 @@
     <link rel='stylesheet' href='CSS/main.css'>
 </head>
 <body>
+
     <?php 
-        
-        session_start();
         include('app.php'); 
         ?>
 
