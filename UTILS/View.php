@@ -56,54 +56,99 @@ class View {
         "</select>
             <label for='date-commande'>Date :</label>
             <input required type='date' id='date-commande' name='date-commande'>
-
-            <input type='submit' name='add-commande' value='Submit'>
+            <input type='submit' name='add-commande' value='Ajouter commande'>
         </form>";
         echo $element;
     }
     public static function formAddCommandeArticle () {
-        $element =
-        "<h2>Ajouter article : </h2>
-        <form action='app.php' method='post'>
-        <label for='selected-article'>Article</label>
-        <select required id='selected-article' name='selected-article'>";
+        $element ="
+        <h2 class='table-row table-bordered table-dark text-center p-3 mb-5'>BON DE COMMANDE</h2>
+        <form class='table table-striped table-bordered table-hover' action='app.php' method='post'>
+  
+        <select class required id='selected-article' name='selected-article'>
+        <option selected value='nothing'>Choisir article</option>";
         $articles =  Database::readAll('articles', 'nom');
         foreach ($articles as $article) {
             $element .= "<option value='{$article['nom']}'>{$article['nom']}</option>";
         }
         $element .= "</select>
         <span id='display-prix'>0,00 €</span>
-        <label for='quantite-article'>Quantité</label>
-        <input required type='number' id='quantite-article' name='quantite-article'>
-        <input id='add-commandearticle' type='submit' name='add-commandearticle' value='Submit'>
-        </form>
-        <form action='app.php' method='post'>
-        <input id='end-commande' type='submit' name='end-commande' value='Terminer la commande'>
+        <label for='quantite-article'>Quantité :</label>
+        <input required type='number' id='quantite-article' name='quantite-article' value='Quantité'>
+        <input id='add-commandearticle' type='submit' name='add-commandearticle' value='Ajouter'>
         </form>
         ";
         echo $element;
     }
     public static function tableArticles () {
-        $element = "";
         $idNewCommande = $_SESSION['id-newcommande'];
-
-        $req = 
-        "SELECT commandes_articles.id_com,  articles.nom, articles.prix, commandes_articles.quantite
-        FROM articles
-        INNER JOIN commandes_articles
+        $reqTable = 
+        "SELECT commandes_articles.id_com,  articles.nom, commandes_articles.quantite, articles.prix
+        FROM articles INNER JOIN commandes_articles
         ON articles.id = commandes_articles.id_art
         WHERE commandes_articles.id_com = {$idNewCommande}";
+        $table = Database::customReadQuery($reqTable);
+        
+        $reqTotal = 
+        "SELECT SUM(articles.prix * commandes_articles.quantite) 
+        FROM articles INNER JOIN commandes_articles 
+        ON articles.id = commandes_articles.id_art 
+        WHERE commandes_articles.id_com = {$idNewCommande} ";
+        $total = Database::customReadQuery($reqTotal);
+        $total = $total[0]['SUM(articles.prix * commandes_articles.quantite)'];
+        //var_dump($total[0]['SUM(articles.prix * commandes_articles.quantite)']);
 
-        $table = Database::customReadQuery($req);
+        $element = "
+        <table class='table table-striped table-bordered table-hover '>
+        <thead>
+          <tr>
+            <th scope='col' class='w-10'>ID COMMANDE</th>
+            <th scope='col'>ARTICLE</th>
+            <th scope='col'>QUANTITE</th>
+            <th scope='col'>PRIX</th>
+          </tr>
+        </thead>
+        <tbody id='list-articles' >
+        ";
         foreach ($table as $row) {
-            echo "</br>";
+            $element .= "<tr>";
             foreach ($row as $data) {
-                echo $data . " | ";
+                $element .= "<td>{$data}</td>";
             }
+            $element .= "</tr>";
         }
+        $element .= "  
+        <tr>
+         
+            <td colspan='3'>TOTAL</td>
+            <td id='total-commande'>{$total},00 € </td>
+          </tr> 
+        </tbody>
+        </table>
+        <form class='d-flex justify-content-end table-row table-striped table-bordered table-hover' action='app.php' method='post'>
+        <input id='end-commande' type='submit' name='end-commande' value='Valider commande'>
+        </form>";
+        echo $element;
     }
 }
 
 ?>
 
-
+ <!-- <table class='table table-dark'>
+   <thead>
+     <tr>
+       <th scope='col'>Id</th>
+       <th scope='col'>Article</th>
+       <th scope='col'>Prix</th>
+       <th scope='col'>Quantité</th>
+     </tr>
+   </thead>
+   <tbody id='list-articles' > -->
+     <!-- <tr>
+       <td>$id</td>
+       <td>$nomarticle</td>
+       <td>$prixarticle</td>
+       <td>$quantitearticle</td>
+     </tr>
+   </tbody>
+ </table> -->

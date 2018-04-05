@@ -36,7 +36,6 @@ if (!empty($_POST)) {
 
   // Validation commande :
   else if (!empty($_POST['end-commande'])) {
-    unset($_SESSION['id-commande']);
     session_unset();
     header('location: index.php');
   }
